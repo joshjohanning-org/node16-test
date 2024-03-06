@@ -52,8 +52,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            let body = `The source repo(s) have been locked and the migration finished.\n\n
-            If you made a mistake and want to unlock the source repo(s), run:
+            let body = `**:lock: The source repo(s) have been locked and the migration finished**. If you made a mistake and want to unlock the source repo(s), run:
   
             \`\`\`
             /unlock-repos
@@ -96,7 +95,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            let body = `There was an error locking the repo(s). [View workflow run for details](${context.payload.repository.html_url}/actions/runs/${context.runId})`
+            let body = `**:x: There was an error locking the repo(s).** [View workflow run for details](${context.payload.repository.html_url}/actions/runs/${context.runId})`
             
             github.rest.issues.createComment({
               issue_number: context.issue.number,
