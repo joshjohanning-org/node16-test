@@ -27,6 +27,7 @@ jobs:
 
       - name: Archive source repositories
         id: archive-repos
+        if: cancelled()
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.ORG_ADMIN_TOKEN }}
