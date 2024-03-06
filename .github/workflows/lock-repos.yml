@@ -11,7 +11,7 @@ permissions:
 jobs:
   lock-repositories:
     name: Finalize migration
-    runs-on: test
+    runs-on: ubuntu-latest
 
     if: github.event_name == 'issue_comment' &&
       contains(github.event.comment.body, '/lock-repos')
