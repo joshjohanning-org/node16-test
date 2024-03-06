@@ -57,7 +57,7 @@ jobs:
                 
                   console.log(`Migration id: ${recentMigration.id}`);
                 
-                  await octokit.rest.migrations.unlockRepoForOrg({
+                  await github.rest.migrations.unlockRepoForOrg({
                     org: orgName,
                     migration_id: recentMigration.id,
                     repo_name: repoName,
