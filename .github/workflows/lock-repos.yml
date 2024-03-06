@@ -46,7 +46,7 @@ jobs:
                 try {
                   await github.rest.migrations.startForOrg({
                     org: orgName,
-                    repositories: `['${repoName}']`,
+                    repositories: [repoName],
                     lock_repositories: true,
                     exclude: ['repositories'],
                   });
