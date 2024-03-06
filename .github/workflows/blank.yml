@@ -1,7 +1,8 @@
 name: Finalize migration
 
 on:
-  workflow_dispatch:
+  issue_comment:
+    types: [created]
   
 permissions:
   issues: write
@@ -29,6 +30,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.ORG_ADMIN_TOKEN }}
+          # base-url: https://${{ vars.SOURCE_HOST }}/api/v3
           script: |
             const repoName = 'node16-test';
             const orgName = 'joshjohanning-org';
@@ -44,20 +46,60 @@ jobs:
               isfailed = true;
             }
 
-      - name: comment issue
-        run: |
-          echo "Commenting issue"
-          # Comment issue
-          # ...
+      - name: Add issue comment
+        if: ${{ success() }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let body = `The source repo(s) have been locked and the migration finished.\n\n
+            If you made a mistake and want to unlock the source repo(s), run:
+  
+            \`\`\`
+            /unlock-repos
+            \`\`\`
+            `
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            })
 
-      - name: Add label
-        run: |
-          echo "Adding label"
-          # Add label
-          # ...
-
+      - name: Add finished label
+        if: ${{ success() }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ["finished"],
+            })
+            
       - name: Close issue
-        run: |
-          echo "Closing issue"
-          # Close issue
-          # ...
+        if: ${{ success() }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: "closed"
+            })
+
+      - name: Add issue failure comment
+        if: ${{ failure() }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let body = `There was an error locking the repo(s). [View workflow run for details](${context.payload.repository.html_url}/actions/runs/${context.runId})`
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            })
