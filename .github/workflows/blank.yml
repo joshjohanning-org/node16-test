@@ -28,8 +28,7 @@ jobs:
         id: archive-repos
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.SOURCE_ADMIN_TOKEN }}
-          base-url: "https://${{ vars.SOURCE_HOST }}/api/v3"
+          github-token: ${{ secrets.ORG_ADMIN_TOKEN }}
           script: |
             const repoName = 'node16-test';
             const orgName = 'joshjohanning-org';
