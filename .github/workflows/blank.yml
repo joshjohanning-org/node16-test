@@ -1,0 +1,64 @@
+name: Finalize migration
+
+on:
+  workflow_dispatch:
+  
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  archive-repositories:
+    name: Finalize migration
+    runs-on: test
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Parse issue body
+        id: parse-issue-body
+        uses: stefanbuck/github-issue-parser@v3
+
+      - run: echo $JSON_STRING
+        env:
+          JSON_STRING: ${{ steps.parse-issue-body.outputs.jsonString }}
+
+      - name: Archive source repositories
+        id: archive-repos
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.SOURCE_ADMIN_TOKEN }}
+          base-url: "https://${{ vars.SOURCE_HOST }}/api/v3"
+          script: |
+            const repoName = 'node16-test';
+            const orgName = 'joshjohanning-org';
+            core.info(`Archiving ${orgName}/${repoName}`);
+            try {
+              await github.rest.repos.update({
+                owner: orgName,
+                repo: repoName,
+                archived: true
+              });
+            } catch (error) {
+              core.error(`Failed to archive ${orgName}/${repoName}: ${error.message}`);
+              isfailed = true;
+            }
+
+      - name: comment issue
+        run: |
+          echo "Commenting issue"
+          # Comment issue
+          # ...
+
+      - name: Add label
+        run: |
+          echo "Adding label"
+          # Add label
+          # ...
+
+      - name: Close issue
+        run: |
+          echo "Closing issue"
+          # Close issue
+          # ...
