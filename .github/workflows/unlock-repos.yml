@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Parse issue body
         id: parse-issue-body
@@ -36,7 +36,8 @@ jobs:
           script: |
             const repositories = process.env.REPOSITORIES.split('\n');
             let isfailed = false;
-            await Promise.all(repositories.map(async (sourceRepo) => {
+            
+            for (const sourceRepo of repositories) {
               if (sourceRepo) {
                 let repoName = sourceRepo.split('/').pop().replace(/\r$/, '');
                 const url = new URL(sourceRepo);
@@ -67,7 +68,8 @@ jobs:
                   isfailed = true;
                 }
               }
-            }));
+            }
+            
             if (isfailed) {
               core.setFailed('Failed to unlock one or more repositories');
             }
