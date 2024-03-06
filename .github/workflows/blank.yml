@@ -52,7 +52,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            let body = `**:lock: The source repo(s) have been locked and the migration finished**. If you made a mistake and want to unlock the source repo(s), run:
+            let body = `**:lock: The source repo(s) have been locked and the migration finished**.\n\n
+            If you made a mistake and want to unlock the source repo(s), add the following comment to this issue:
   
             \`\`\`
             /unlock-repos
