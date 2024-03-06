@@ -55,7 +55,7 @@ jobs:
                     new Date(b.created_at) - new Date(a.created_at)
                   )[0];
                 
-                  console.log(`Migration id: ${recentMigration.id}`;
+                  console.log(`Migration id: ${recentMigration.id}`);
                 
                   await octokit.rest.migrations.unlockRepoForOrg({
                     org: orgName,
