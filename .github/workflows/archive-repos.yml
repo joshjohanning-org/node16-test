@@ -9,9 +9,12 @@ permissions:
   contents: read
 
 jobs:
-  archive-repositories:
+  lock-repositories:
     name: Finalize migration
     runs-on: test
+
+    if: github.event_name == 'issue_comment' &&
+      contains(github.event.comment.body, '/lock-repos')
 
     steps:
       - name: Check out repository
@@ -25,8 +28,8 @@ jobs:
         env:
           JSON_STRING: ${{ steps.parse-issue-body.outputs.jsonString }}
 
-      - name: Archive source repositories
-        id: archive-repos
+      - name: Lock source repositories
+        id: lock-repos
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.SOURCE_ADMIN_TOKEN }}
@@ -48,7 +51,7 @@ jobs:
                     exclude: ['repositories'],
                   });
                 } catch (error) {
-                  core.error(`Failed to archive ${orgName}/${repoName}: ${error.message}`);
+                  core.error(`Failed to lock ${orgName}/${repoName}: ${error.message}`);
                   isfailed = true;
                 }
               }
