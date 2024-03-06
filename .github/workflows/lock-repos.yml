@@ -42,11 +42,11 @@ jobs:
                 let repoName = sourceRepo.split('/').pop().replace(/\r$/, '');
                 const url = new URL(sourceRepo);
                 const orgName = url.pathname.split('/')[1];
-                core.info(`Archiving ${orgName}/${repoName}`);
+                core.info(`Locking ${orgName}/${repoName}`);
                 try {
                   await github.rest.migrations.startForOrg({
                     org: orgName,
-                    repositories: ['test-repo-export'],
+                    repositories: repoName,
                     lock_repositories: true,
                     exclude: ['repositories'],
                   });
